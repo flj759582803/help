@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EUNIS帮助-常见问题</title>
+    <link rel="stylesheet" href="css/help.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app" v-cloak>
+    <div class="header">
+        <div class="logo">
+            <a href="#"><img src="image/logo.png" alt=""></a>
+            <a class="help" href="index.html"><span>EUNIS帮助</span></a>
+        </div>
+    </div>
+    <div class="container clearfix">
+        <div class="aside">
+            <a href="index.html" class="now"><i class="icon-stack"></i>常见问题</a>
+            <a @click="findListByCategory('')" @click="now" href="javascript:;">全部</a>
+            <a @click="findListByCategory(item.billType)" href="javascript:;" v-for="item in category">{{item.billTypeName}}</a>
+        </div>
+
+        <div class="article">
+            <div class="search clearfix">
+                <div class="searchlogo">
+                    <img src="image/search.png" alt="">
+                </div>
+                <input class="name" type="text" v-model="attachmentName" placeholder="根据问题模糊查询，如“注册”">
+                <input class="cond" type="text" v-model="condition" placeholder="根据附件模糊查询，如“附件”">
+                <a href="javascript:;" @click="findListByAttachmentName">搜索</a>
+            </div>
+            <div class="detail">
+                <div class="tit">
+                    <span v-if="!qaDesc" class="back">{{billTypeName}}</span>
+                    <span v-if="qaDesc" class="back" @click="back">{{billTypeName}}</span>
+                     <span v-if="qaDesc">&gt; {{qaDesc}}</span>
+                </div>
+                <vue-content v-on:answer="answer" ref="list"></vue-content>
+            </div>
+        </div>
+    </div>
+</div>
+
+<template id="content">
+    <div class="con">
+        <!--问题列表-->
+        <ul v-show="!isShowDetail">
+            <li v-for="item in list"><a href="javascript:;" @click="showDetail(item.id)">{{item.qaDesc}}</a></li>
+        </ul>
+        <!--分页-->
+        <vue-page ref="page" v-show="!isShowDetail" v-on:page="clickPage"></vue-page>
+
+        <!--答案及附件列表-->
+        <div v-show="isShowDetail">
+            <!--<div style="margin-bottom: 40px">{{detail.answerAdvise}}</piv>-->
+            <div style="margin-bottom: 40px" v-html="detail.answerAdvise">{{detail.answerAdvise}}</div>
+                <p class="file" v-for="(item,index) in detail.list">附件{{index+1}}：<a :href="item.filedesc">{{item.filename}}</a></p>
+        </div>
+    </div>
+
+</template>
+
+
+
+<template id="page">
+    <div class="page clearfix">
+        <span class="pagename">分页：</span>
+        <a v-if="pageNow>1" href="javascript:;" @click="prev" class="other">&lt;上一页</a>
+        <a href="javascript:;" :class="{now:pageNow==n}" v-for="n in pageLen" @click="go(n)">{{n}}</a>
+        <a v-if="pageNow<pageLen" href="javascript:;" @click="next" class="other">下一页&gt;</a>
+    </div>
+</template>
+<script src="js/vue.js"></script>
+<script src="js/axios.min.js"></script>
+<script src="js/lodash.min.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
